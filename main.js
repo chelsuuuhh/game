@@ -7,6 +7,8 @@ var mainState = {
         // That's where we load the game's assets
         // Load the image
         game.load.image("lazysloth","sloth.jpg");
+        game.load.image(
+            'leaf','leaf.jpg');
     }
     , create: function () {
         // This function is called after the 'preload' function 
@@ -14,11 +16,17 @@ var mainState = {
         this.keyboard= game.input.keyboard.createCursorKeys();
         
         this.player = game.add.sprite(300,300,"lazysloth");
-        this.player.scale.setTo(.5,.5);
+        this.player.scale.setTo(.2,.2);
+        
+        //makes group of stuff
+        this.leaf = game.add.group();
+        this.leaf.enableBody = true;
+        this.leaf.createMultiple(10,"leaf");
         
         game.physics.arcade.enable(this.player);
         this.player.body.gravity.y = 300;
         this.player.body.collideWorldBounds = true;
+        game.time.events.loop(220, this.addLeaf,this);
         // This contains Game Logic 
     },
     update: function () {
@@ -35,6 +43,23 @@ var mainState = {
             this.player.body.velocity.y = -300;
         }
     }
+    , addLeaf: function(){
+        var leaf = this.leaf.getFirstDead();
+        if (!leaf) {
+            return;
+        }
+        leaf.scale.setTo(.2,.2);
+        leaf.anchor.setTo(0.5, 1);
+        leaf.reset( game.rnd.pick([game.width/2,0]),0);
+        leaf.body.gravity.y = 500;
+        leaf.body.velocity.x = 100 *
+        game.rnd.pick([-2, 2]);
+        leaf.body.bounce.x = 1;
+        leaf.checkWorldBounds = true;
+        leaf.outOfBoundsKill = true;
+    }
+    
+    // Initialize the lea
 };
 // We initialize Phaser
 var game = new Phaser.Game(800, 800, Phaser.AUTO, '');
